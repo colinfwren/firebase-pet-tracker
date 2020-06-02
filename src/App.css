@@ -1,0 +1,8 @@
+.is-gradient {
+  background: linear-gradient(90deg,#cf70f6 0%,#1f56ac 100%);
+  color: white;
+}
+
+.is-gradient > .content > .title, .is-gradient > .content > .subtitle{
+  color: white;
+}
