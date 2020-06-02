@@ -59,6 +59,7 @@ const StateProvider = ({ children }) => {
           },
         });
         firebase.getDoggosForUser(dispatch);
+        dispatch({ type: 'save_data' });
       }
     });
   }, [])
