@@ -1,0 +1,22 @@
+{
+  "name": "dialogflow",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "jest --runInBand"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "googleapis": "^52.0.0",
+    "node-fetch": "^2.6.0",
+    "uuid": "^8.1.0"
+  },
+  "devDependencies": {
+    "jest": "^26.0.1"
+  }
+}
