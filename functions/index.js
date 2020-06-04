@@ -2,7 +2,7 @@ const functions = require('firebase-functions');
 const { dialogflow } = require('actions-on-google');
 const admin = require('firebase-admin');
 const serviceAccount = require('./serviceAccount.json');
-const { databaseURL, testEmail } = require('./config');
+const { databaseURL, clientId } = require('./config');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -17,34 +17,43 @@ const dbs = {
 };
 
 const app = dialogflow({
+  clientId,
   debug: true,
 });
 
 app.middleware(async (conv) => {
-  let { email } = conv.user;
-  if (process.env.NODE_ENV === 'test') {
-    email = testEmail;
-  }
+  const { email } = conv.user;
   if (!conv.data.uid && email) {
     try {
       conv.data.uid = (await auth.getUserByEmail(email)).uid;
-    } catch (e) {
-      if (e.code !== 'auth/user-not-found') {
-        throw e;
+    } catch (err) {
+      if (err.code !== 'auth/user-not-found') {
+        conv.data.error = 'Unable to get user ID';
       }
       // If the user is not found, create a new Firebase auth user
       // using the email obtained from the Google Assistant
-      conv.data.uid = (await auth.createUser({email})).uid;
+      try{
+        conv.data.uid = (await auth.createUser({email})).uid;
+      } catch (err) {
+        conv.data.error = 'Unable to create Doggo Bot account for user';
+      }
     }
   }
   if (conv.data.uid) {
-    conv.doggos = {
-      ref: dbs.doggos.doc(conv.data.uid),
-    };
+    try {
+      conv.doggos = {
+        ref: dbs.doggos.doc(conv.data.uid),
+      };
+    } catch (err) {
+      conv.data.error = 'Unable to talk to database';
+    }
   }
 });
 
 app.intent('Add Doggo', async (conv, { name, dob, tailWaggability }) => {
+  if (conv.data.error) {
+    return conv.close(`Doggo Bot Encountered an error: ${conv.data.error}. Please try again.`)
+  }
   conv.data.name = name;
   conv.data.dob = dob;
   conv.data.tailWaggability = tailWaggability;
