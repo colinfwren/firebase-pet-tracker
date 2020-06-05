@@ -17,10 +17,10 @@ const reducer = (state, { type, payload }) => {
       return { ...state, ...{ doggos: [...state.doggos, payload.doggo]} };
     case 'remove_doggo':
       return { ...state, ...{ doggos: state.doggos.filter(x => x.name !== payload.name )}}
-    case 'logout_user':  
+    case 'logout_user':
     case 'login_user':
       return { ...state, ...{ user: payload.user }}
-    case 'change_title': 
+    case 'change_title':
       return { ...state, ...payload };
     case 'save_data':
       localStorage.setItem('data', JSON.stringify(state));
@@ -28,12 +28,15 @@ const reducer = (state, { type, payload }) => {
         firebase.saveDoggosForUser(state);
       }
       return state;
+    case 'save_data_to_localstorage':
+      localStorage.setItem('data', JSON.stringify(state));
+      return state;
     case 'load_data':
       return {
         ...state,
         ...payload.data,
       }
-    default: 
+    default:
     return state;
   }
 };
@@ -49,7 +52,7 @@ const StateProvider = ({ children }) => {
         const { displayName, photoURL, uid} = authUser;
         dispatch({
           type: 'login_user',
-          payload: { 
+          payload: {
             user: {
               name: displayName,
               picture: photoURL,
@@ -59,7 +62,7 @@ const StateProvider = ({ children }) => {
           },
         });
         firebase.getDoggosForUser(dispatch);
-        dispatch({ type: 'save_data' });
+        dispatch({ type: 'save_data_to_localstorage' });
       }
     });
   }, [])
