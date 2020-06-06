@@ -1,7 +1,6 @@
 # Doggo Tracker
 This is a demo project for my blog posts:
-- [Blog Post 1]()
-- [Blog Post 2]()
+- [Adding a conversational interface to your app with Dialogflow](https://medium.com/@colinwren/adding-a-conversational-interface-to-your-app-with-dialogflow-9cfb032fce66)
 
 In order to run the app you'll need to set up a firebase project and save the config object into `src/credentials.js` and export it as the default.
 
